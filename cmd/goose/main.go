@@ -15,7 +15,8 @@ var flagEnv = flag.String("env", os.Getenv("GO_ENV"), "which DB environment to u
 
 // helper to create a DBConf from the given flags
 func dbConfFromFlags() (dbconf *goose.DBConf, err error) {
-	flagEnv = os.Getenv("GO_ENV")
+	envStr := os.Getenv("GO_ENV")
+	flagEnv = &envStr
 
 	return goose.NewDBConf(*flagPath, *flagEnv)
 }
