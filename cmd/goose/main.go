@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Sproutling/goose/lib/goose"
+	"log"
 	"os"
 	"strings"
 	"text/template"
@@ -15,6 +16,7 @@ var flagEnv = flag.String("env", os.Getenv("GO_ENV"), "which DB environment to u
 
 // helper to create a DBConf from the given flags
 func dbConfFromFlags() (dbconf *goose.DBConf, err error) {
+	log.Println("FLAGENV", *flagEnv)
 	return goose.NewDBConf(*flagPath, *flagEnv)
 }
 
