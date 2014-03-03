@@ -360,6 +360,8 @@ func CreateMigration(name, migrationType, dir string, t time.Time) (path string,
 }
 
 var goMigrationTemplate = template.Must(template.New("goose.go-migration").Parse(`
+// +build ignore
+
 package main
 
 import (
