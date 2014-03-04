@@ -78,6 +78,7 @@ import (
 	"database/sql"
 	_ "{{.Driver.Import}}"
 	"log"
+	"regexp"
 )
 
 func main() {
@@ -97,10 +98,12 @@ func main() {
 		log.Fatal("db.Begin:", err)
 	}
 
+	continueOnErrorRegexp := regexp.MustCompile("(?:already exists)|(?:does not exist)")
+
 	err = {{ .Func }}(txn)
-	if err != nil {
+	if err != nil && !continueOnErrorRegexp.MatchString(err.Error()) {
 		txn.Rollback()
-		log.Fatal("failed to migrate:", err)
+		log.Fatal("failed to migrate:", err) 
 	}
 
 	// XXX: drop goose_db_version table on some minimum version number?
