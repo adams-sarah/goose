@@ -87,6 +87,11 @@ func main() {
 	}
 	defer db.Close()
 
+	_, err = db.Exec("SET AUTOCOMMIT TO ON;")
+	if err != nil {
+		log.Fatal("failed to set autocommit to on:", err)
+	}
+
 	txn, err := db.Begin()
 	if err != nil {
 		log.Fatal("db.Begin:", err)
