@@ -78,7 +78,6 @@ import (
 	"database/sql"
 	_ "{{.Driver.Import}}"
 	"log"
-	"regexp"
 )
 
 func main() {
