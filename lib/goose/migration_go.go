@@ -92,14 +92,6 @@ func main() {
 		log.Fatal("db.Begin:", err)
 	}
 
-	// See if we already ran this migration
-	var versionId int64
-	err = db.QueryRow("SELECT id FROM goose_db_version WHERE version_id=$1", {{ .Version }}).Scan(&versionId)
-	if err == nil {
-		log.Println("already migrated {{ .Version }} - skipping.")
-		return
-	}
-
 	err = {{ .Func }}(txn)
 	if err != nil {
 		txn.Rollback()
