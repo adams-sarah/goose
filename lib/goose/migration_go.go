@@ -87,19 +87,23 @@ func main() {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("SET AUTOCOMMIT TO ON;")
-	if err != nil {
-		log.Fatal("failed to set autocommit to on:", err)
-	}
-
 	txn, err := db.Begin()
 	if err != nil {
 		log.Fatal("db.Begin:", err)
 	}
 
+	// See if we already ran this migration
+	var versionId int64
+	err = db.QueryRow("SELECT id FROM goose_db_version WHERE version_id=$1", {{ .Version }}).Scan(&versionId)
+	if err == nil {
+		log.Println("already migrated {{ .Version }} - skipping.")
+		return
+	}
+
 	err = {{ .Func }}(txn)
 	if err != nil {
-		log.Println("failed to migrate:", err) 
+		txn.Rollback()
+		log.Fatal("failed to migrate:", err)
 	}
 
 	// XXX: drop goose_db_version table on some minimum version number?
