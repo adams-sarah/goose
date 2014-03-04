@@ -97,7 +97,11 @@ func main() {
 		log.Fatal("db.Begin:", err)
 	}
 
-	{{ .Func }}(txn)
+	err = {{ .Func }}(txn)
+	if err != nil {
+		txn.Rollback()
+		log.Fatal("failed to migrate:", err)
+	}
 
 	// XXX: drop goose_db_version table on some minimum version number?
 	stmt := "{{ .InsertStmt }}"
