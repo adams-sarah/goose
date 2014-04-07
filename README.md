@@ -6,11 +6,9 @@ goose is a database migration tool.
 
 You can manage your database's evolution by creating incremental Go migration scripts.
 
-# Go get
+# Usage
 
     $ go get bitbucket.org/liamstask/goose/lib/goose
-
-# Usage
 
 goose provides several methods to help manage your database schema.
 
