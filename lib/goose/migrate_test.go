@@ -1,71 +1,56 @@
 package goose
 
 import (
+	"database/sql"
 	"testing"
 )
 
-func TestMigrationMapSortUp(t *testing.T) {
+var myPackageVar string
 
-	ms := migrationSorter{}
+// Register migrations for goose to run
+func TestRegisterMigration(t *testing.T) {
+	RegisterMigration(int64(20140406181655), "AddTestFieldToTable", Up_20140406181655, Down_20140406181655)
 
-	// insert in any order
-	ms = append(ms, newMigration(20120000, "test"))
-	ms = append(ms, newMigration(20128000, "test"))
-	ms = append(ms, newMigration(20129000, "test"))
-	ms = append(ms, newMigration(20127000, "test"))
-
-	ms.Sort(true) // sort Upwards
-
-	sorted := []int64{20120000, 20127000, 20128000, 20129000}
-
-	validateMigrationSort(t, ms, sorted)
-}
-
-func TestMigrationMapSortDown(t *testing.T) {
-
-	ms := migrationSorter{}
-
-	// insert in any order
-	ms = append(ms, newMigration(20120000, "test"))
-	ms = append(ms, newMigration(20128000, "test"))
-	ms = append(ms, newMigration(20129000, "test"))
-	ms = append(ms, newMigration(20127000, "test"))
-
-	ms.Sort(false) // sort Downwards
-
-	sorted := []int64{20129000, 20128000, 20127000, 20120000}
-
-	validateMigrationSort(t, ms, sorted)
-}
-
-func validateMigrationSort(t *testing.T, ms migrationSorter, sorted []int64) {
-
-	for i, m := range ms {
-		if sorted[i] != m.Version {
-			t.Error("incorrect sorted version")
-		}
-
-		var next, prev int64
-
-		if i == 0 {
-			prev = -1
-			next = ms[i+1].Version
-		} else if i == len(ms)-1 {
-			prev = ms[i-1].Version
-			next = -1
-		} else {
-			prev = ms[i-1].Version
-			next = ms[i+1].Version
-		}
-
-		if m.Next != next {
-			t.Errorf("mismatched Next. v: %v, got %v, wanted %v\n", m, m.Next, next)
-		}
-
-		if m.Previous != prev {
-			t.Errorf("mismatched Previous v: %v, got %v, wanted %v\n", m, m.Previous, prev)
-		}
+	if len(UserMigrations) < 1 {
+		t.Errorf("Migration did not register.")
 	}
 
-	t.Log(ms)
+	if UserMigrations[int64(20140406181655)].Version != int64(20140406181655) {
+		t.Errorf("Migration registered with incorrect version. Expected %d got %d", 20140406181655, UserMigrations[int64(20140406181655)].Version)
+	}
+}
+
+func TestRunMigrations(t *testing.T) {
+	me := NewMigrationExecutor()
+	err := RunMigrations(me, UP, RUN_ALL)
+	if err != nil {
+		t.Errorf("Migration returned error: %s.", err.Error())
+	}
+
+	expected := "Up"
+	if myPackageVar != expected {
+		t.Errorf("Migration did not run UP. Expected myPackageVar to equal %s, got %s.", expected, myPackageVar)
+	}
+
+	err = RunMigrations(me, DOWN, RUN_ALL)
+	if err != nil {
+		t.Errorf("Migration returned error: %s.", err.Error())
+	}
+
+	expected = "Down"
+	if myPackageVar != expected {
+		t.Errorf("Migration did not run DOWN. Expected myPackageVar to equal %s, got %s.", expected, myPackageVar)
+	}
+}
+
+// Up is executed when this migration is applied
+func Up_20140406181655(txn *sql.Tx) (err error) {
+	myPackageVar = "Up"
+	return
+}
+
+// Down is executed when this migration is rolled back
+func Down_20140406181655(txn *sql.Tx) (err error) {
+	myPackageVar = "Down"
+	return
 }

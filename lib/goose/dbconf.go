@@ -9,6 +9,12 @@ import (
 	"path/filepath"
 )
 
+const (
+	DOWN    = false
+	UP      = true
+	RUN_ALL = -1
+)
+
 // DBDriver encapsulates the info needed to work with
 // a specific database driver
 type DBDriver struct {

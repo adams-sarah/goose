@@ -1,15 +1,15 @@
 
 test:
     driver: postgres
-    open: user=liam dbname=tester sslmode=disable
+    open: user=adamssarah dbname=tester sslmode=disable
 
 development:
     driver: postgres
-    open: user=liam dbname=tester sslmode=disable
+    open: user=adamssarah dbname=tester sslmode=disable
     
 production:
     driver: postgres
-    open: user=liam dbname=tester sslmode=verify-full
+    open: user=adamssarah dbname=tester sslmode=verify-full
 
 customimport:
     driver: customdriver

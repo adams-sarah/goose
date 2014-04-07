@@ -1,12 +1,9 @@
 package goose
 
 import (
-	"io"
 	"os"
 	"text/template"
 )
-
-// common routines
 
 func writeTemplateToFile(path string, t *template.Template, data interface{}) (string, error) {
 	f, e := os.Create(path)
@@ -21,20 +18,4 @@ func writeTemplateToFile(path string, t *template.Template, data interface{}) (s
 	}
 
 	return f.Name(), nil
-}
-
-func copyFile(dst, src string) (int64, error) {
-	sf, err := os.Open(src)
-	if err != nil {
-		return 0, err
-	}
-	defer sf.Close()
-
-	df, err := os.Create(dst)
-	if err != nil {
-		return 0, err
-	}
-	defer df.Close()
-
-	return io.Copy(df, sf)
 }
