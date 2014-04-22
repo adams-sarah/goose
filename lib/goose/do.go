@@ -68,28 +68,26 @@ func (me *MigrationExecutor) Do(methodName string, args ...interface{}) {
 
 func (me *MigrationExecutor) Up(runCount ...int64) {
 	if len(runCount) > 0 {
-		me.run(UP, runCount[0])
+		me.run(runCount[0], UP)
 	} else {
-		me.run(UP, RUN_ALL)
+		me.run(RUN_ALL, UP)
 	}
 
 }
 
 func (me *MigrationExecutor) Down(runCount ...int64) {
 	if len(runCount) > 0 {
-		me.run(DOWN, runCount[0])
+		me.run(runCount[0], DOWN)
 	} else {
-		me.run(DOWN, 1)
+		me.run(1, DOWN)
 	}
 }
 
 func (me *MigrationExecutor) Redo(runCount ...int64) {
 	if len(runCount) > 0 {
-		me.run(DOWN, runCount[0])
-		me.run(UP, runCount[0])
+		me.run(runCount[0], DOWN, UP)
 	} else {
-		me.run(DOWN, 1)
-		me.run(UP, 1)
+		me.run(1, DOWN, UP)
 	}
 }
 
@@ -105,10 +103,12 @@ func (me *MigrationExecutor) Create(migrationName string) {
 	fmt.Println("goose: created", absolutePath)
 }
 
-func (me *MigrationExecutor) run(direction bool, runCount int64) {
+func (me *MigrationExecutor) run(runCount int64, directions ...bool) {
 	defer me.DB.Close()
-	if err := RunMigrations(me, direction, runCount); err != nil {
-		log.Fatal(err)
+	for _, direction := range directions {
+		if err := RunMigrations(me, direction, runCount); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
