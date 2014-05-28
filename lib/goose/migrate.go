@@ -4,14 +4,15 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	_ "github.com/lib/pq"
-	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 	"os"
 	"path/filepath"
 	"sort"
 	"text/template"
 	"time"
+
+	_ "github.com/lib/pq"
+	_ "github.com/ziutek/mymysql/godrv"
 )
 
 const VERSION_LAYOUT = "20060102150405"
@@ -81,7 +82,8 @@ func RunMigrations(me *MigrationExecutor, isUp bool, runCount int64) (err error)
 		err = runGoMigration(me.DB, me.Conf, m.Version, isUp)
 
 		if err != nil {
-			log.Printf("FAIL   %d_%s     %s\n", m.Version, m.Name, err.Error())
+			log.Printf("FAIL   %d_%s\n", m.Version, m.Name)
+			return err
 		} else {
 			log.Printf("OK     %d_%s\n", m.Version, m.Name)
 		}

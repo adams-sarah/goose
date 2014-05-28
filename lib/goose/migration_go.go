@@ -2,9 +2,10 @@ package goose
 
 import (
 	"database/sql"
+	"log"
+
 	_ "github.com/lib/pq"
 	_ "github.com/ziutek/mymysql/godrv"
-	"log"
 )
 
 func runGoMigration(db *sql.DB, conf *DBConf, version int64, direction bool) error {
@@ -33,4 +34,10 @@ func runGoMigration(db *sql.DB, conf *DBConf, version int64, direction bool) err
 	txn.Commit()
 
 	return nil
+}
+
+func forceMigrationVersion(db *sql.DB, conf *DBConf, version int64) error {
+	stmt := conf.Driver.Dialect.insertVersionSql()
+	_, err := db.Exec(stmt, version, UP)
+	return err
 }

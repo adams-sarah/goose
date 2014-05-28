@@ -45,7 +45,7 @@ func (pg *PostgresDialect) insertVersionSql() string {
 }
 
 func (pg *PostgresDialect) dbVersionQuery(db *sql.DB) (*sql.Rows, error) {
-	rows, err := db.Query("SELECT version_id, is_applied from goose_db_version ORDER BY id DESC")
+	rows, err := db.Query("SELECT version_id, is_applied from goose_db_version ORDER BY version_id DESC, id DESC")
 
 	// XXX: check for postgres specific error indicating the table doesn't exist.
 	// for now, assume any error is because the table doesn't exist,

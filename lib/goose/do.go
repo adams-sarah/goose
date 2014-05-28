@@ -103,6 +103,17 @@ func (me *MigrationExecutor) Create(migrationName string) {
 	fmt.Println("goose: created", absolutePath)
 }
 
+func (me *MigrationExecutor) Force(migrationVersion int64) {
+	defer me.DB.Close()
+
+	if UserMigrations[migrationVersion].Version == int64(0) {
+		fmt.Println("goose: no migration found for version", migrationVersion)
+	} else {
+		forceMigrationVersion(me.DB, me.Conf, migrationVersion)
+		log.Printf("OK   %d_%s\n", migrationVersion, UserMigrations[migrationVersion].Name)
+	}
+}
+
 func (me *MigrationExecutor) run(runCount int64, directions ...bool) {
 	defer me.DB.Close()
 	for _, direction := range directions {
