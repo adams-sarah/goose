@@ -114,6 +114,19 @@ func (me *MigrationExecutor) Force(migrationVersion int64) {
 	}
 }
 
+func (me *MigrationExecutor) ForceAll() {
+	defer me.DB.Close()
+
+	mAppliedLookup := appliedMigrationsLookup(me.DB)
+
+	for version, _ := range UserMigrations {
+		if mAppliedLookup[version].IsZero() {
+			forceMigrationVersion(me.DB, me.Conf, version)
+			log.Printf("OK   %d_%s\n", version, UserMigrations[version].Name)
+		}
+	}
+}
+
 func (me *MigrationExecutor) run(runCount int64, directions ...bool) {
 	defer me.DB.Close()
 	for _, direction := range directions {
