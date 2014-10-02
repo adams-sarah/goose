@@ -20,7 +20,7 @@ type MigrationExecutor struct {
 func NewMigrationExecutor() *MigrationExecutor {
 	env := os.Getenv("GO_ENV")
 	if env == "" {
-		env = "development"
+		env = "default"
 	}
 
 	path := os.Getenv("GOOSE_DB_PATH")
