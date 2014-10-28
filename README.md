@@ -1,6 +1,6 @@
 # goose
 
-This is a fork of the [original goose](https://bitbucket.org/liamstask/goose) by liamstask. This fork has removed the need for a go binary in `$PATH`, which is helpful for hosted environments (ie. Heroku). We also removed support for straight SQL migrations for lack of time and resources.
+This is a fork of the [original goose](https://bitbucket.org/liamstask/goose) by liamstask. This fork has removed the need for a go binary in `$PATH`, which is helpful for hosted environments. We also removed support for straight SQL migrations for lack of time and resources.
 
 goose is a database migration tool.
 
